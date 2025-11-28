@@ -1,0 +1,2331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contabilidad En Finos - Powered By NeuraCoreApps.dev</title>
+  <!-- Tailwind desde CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    .tabla-scroll {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+    .google-btn {
+      background: white;
+      color: #757575;
+      border: 1px solid #dadce0;
+    }
+    .google-btn:hover {
+      background: #f8f9fa;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col items-center py-6">
+  <!-- ========== INICIO DEL LOGIN ========== -->
+  <div id="loginOverlay" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-slate-900">GoldFlow System</h2>
+        <p class="text-slate-600 mt-2" id="loginSubtitle">Inicia sesión para continuar</p>
+      </div>
+      
+      <form id="loginForm" class="space-y-4">
+        <div id="registerNameField" class="hidden">
+          <label for="registerName" class="block text-sm font-medium text-slate-700 mb-1">Nombre completo</label>
+          <input type="text" id="registerName" 
+                 class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="Tu nombre completo">
+        </div>
+        
+        <div>
+          <label for="loginEmail" class="block text-sm font-medium text-slate-700 mb-1">Correo electrónico</label>
+          <input type="email" id="loginEmail" 
+                 class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="tu@email.com" required>
+        </div>
+        
+        <div>
+          <label for="loginPassword" class="block text-sm font-medium text-slate-700 mb-1">Contraseña</label>
+          <input type="password" id="loginPassword" 
+                 class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="Ingresa tu contraseña" required>
+        </div>
+        
+        <div id="registerConfirmPassword" class="hidden">
+          <label for="confirmPassword" class="block text-sm font-medium text-slate-700 mb-1">Confirmar contraseña</label>
+          <input type="password" id="confirmPassword" 
+                 class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="Confirma tu contraseña">
+        </div>
+        
+        <button type="submit" id="submitAuthButton"
+                class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl transition">
+          Iniciar sesión
+        </button>
+      </form>
+      
+      <div class="flex items-center my-6">
+        <div class="flex-1 border-t border-slate-300"></div>
+        <div class="px-3 text-slate-500 text-sm">o</div>
+        <div class="flex-1 border-t border-slate-300"></div>
+      </div>
+      
+      <button id="googleSignIn" class="w-full google-btn font-medium rounded-xl px-4 py-2.5 flex items-center justify-center gap-3 transition">
+        <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+          <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+          <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+          <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+          <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+        </svg>
+        Continuar con Google
+      </button>
+      
+      <div class="mt-6 text-center text-sm text-slate-600">
+        <span id="toggleAuthText">¿No tienes cuenta?</span>
+        <button id="toggleAuthMode" type="button"
+                class="text-emerald-600 hover:text-emerald-700 font-medium">
+          Registrate
+        </button>
+      </div>
+      
+      <div class="mt-4 text-center text-xs text-slate-500">
+        <p>Usuario demo: demo@goldflow.com</p>
+        <p>Contraseña: 123456</p>
+      </div>
+    </div>
+  </div>
+  <!-- ========== FIN DEL LOGIN ========== -->
+
+  <div class="w-full max-w-6xl bg-white shadow-lg rounded-2xl p-6 space-y-6 hidden" id="appContent">
+    <!-- Encabezado -->
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
+          GoldFlow System · Información en tiempo real
+        </h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btnInstrucciones"
+                class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-2 rounded-full transition">
+          Instrucciones
+        </button>
+          <!-- BOTÓN NUEVO PARA CERRAR SESIÓN -->
+        <button id="btnCerrarSesion"
+                class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-semibold px-3 py-2 rounded-full transition">
+          Cerrar sesión
+        </button>
+      </div>
+    </header>
+
+    <!-- Configuración de usuario, hoja, saldo -->
+    <section class="grid md:grid-cols-4 gap-4 items-end">
+      <!-- Usuario -->
+      <div class="space-y-1">
+        <label for="usuarioActual" class="text-sm font-medium text-slate-700">
+          Usuario actual
+        </label>
+        <input list="listaUsuarios" id="usuarioActual"
+               class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+               placeholder="Usuario" />
+        <datalist id="listaUsuarios"></datalist>
+        <p id="usuarioInfoRegistro" class="text-[11px] text-slate-500 mt-1"></p>
+      </div>
+
+      <!-- Info hoja -->
+      <div class="space-y-1">
+        <span class="text-sm font-medium text-slate-700 block">
+          Hoja actual
+        </span>
+        <div class="flex items-center gap-2 text-xs border border-slate-200 rounded-xl px-3 py-2 bg-slate-50">
+          <div class="flex-1">
+            <p id="infoHojaActual" class="font-semibold text-slate-800">
+              Hoja nueva
+            </p>
+            <p id="infoHojaFecha" class="text-slate-500 text-[11px]">
+              Fecha / hora
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nuevo cupo disponible -->
+      <div class="space-y-1">
+        <label class="text-sm font-medium text-slate-700 block">
+          Nuevo cupo disponible (COP)
+        </label>
+        <div class="flex gap-2">
+          <input id="inputSaldoInicial" type="text"
+                 class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="1.000.000" />
+          <button id="btnEstablecerSaldoInicial"
+                  class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-2 rounded-full transition">
+            Cargar
+          </button>
+        </div>
+      </div>
+
+      <!-- Exportar hoja actual -->
+      <div class="space-y-1">
+        <span class="text-sm font-medium text-slate-700 block">
+          Exportar hoja actual
+        </span>
+        <div class="flex gap-2">
+          <button id="btnExportCSV"
+                  class="flex-1 text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-3 py-2 rounded-full transition">
+            CSV
+          </button>
+          <button id="btnExportXLS"
+                  class="flex-1 text-xs bg-sky-500 hover:bg-sky-600 text-white font-semibold px-3 py-2 rounded-full transition">
+            XLSX
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SALDO + DASHBOARD -->
+    <section class="border border-emerald-200 rounded-2xl bg-emerald-50 px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs">
+      <div>
+        <p class="text-[11px] uppercase tracking-wide text-emerald-700 font-semibold">
+          Saldo disponible actual (COP)
+        </p>
+        <p class="text-lg font-bold text-emerald-900 font-mono">
+          <span id="saldoDisponibleActual">0</span>
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <button id="btnDashboardDia"
+                class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-2 rounded-full transition">
+          Resumen del día
+        </button>
+      </div>
+    </section>
+
+    <!-- PANEL DASHBOARD DÍA -->
+    <section id="panelDashboardDia" class="hidden border border-slate-200 rounded-2xl p-4 bg-slate-50 text-xs space-y-3">
+      <h2 class="text-sm font-semibold text-slate-800">Dashboard · Resumen del día</h2>
+      <div class="grid md:grid-cols-3 gap-3">
+        <div class="border border-slate-200 rounded-xl bg-white p-3 space-y-1">
+          <p class="text-[11px] uppercase text-slate-500 font-semibold">Flujo base</p>
+          <p>Saldo inicial: <span id="dashSaldoInicial" class="font-mono font-bold">0</span> COP</p>
+          <p>Compras (oro): <span id="dashCompras" class="font-mono font-bold">0</span> COP</p>
+          <p>Debemos recibidos: <span id="dashDebemosRecibidos" class="font-mono font-bold">0</span> COP</p>
+          <p>Pagos de deudas: <span id="dashPagosDebemos" class="font-mono font-bold">0</span> COP</p>
+        </div>
+        <div class="border border-slate-200 rounded-xl bg-white p-3 space-y-1">
+          <p class="text-[11px] uppercase text-slate-500 font-semibold">Cajas auxiliares</p>
+          <p>Vales: <span id="dashVales" class="font-mono font-bold">0</span> COP</p>
+          <p>Gastos extra: <span id="dashGastosExtras" class="font-mono font-bold">0</span> COP</p>
+          <p>Saldo disponible: <span id="dashSaldoDisponible" class="font-mono font-bold">0</span> COP</p>
+        </div>
+        <div class="border border-slate-200 rounded-xl bg-white p-3 space-y-1">
+          <p class="text-[11px] uppercase text-slate-500 font-semibold">Finos y compras</p>
+          <p>Finos compra: <span id="dashFinos" class="font-mono font-bold">0,00</span></p>
+          <p>Compra total: <span id="dashCompraTotal" class="font-mono font-bold">0</span> COP</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabla principal -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between gap-2">
+        <h2 class="text-sm font-semibold text-slate-700">
+          Hoja de movimientos
+        </h2>
+        <button id="btnAgregarFila"
+                class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-2 rounded-full transition">
+          + Agregar fila
+        </button>
+      </div>
+
+      <div class="border border-slate-200 rounded-2xl bg-slate-50 tabla-scroll">
+        <table class="min-w-full text-xs">
+          <thead class="bg-slate-100 sticky top-0 z-10">
+            <tr>
+              <th class="px-2 py-2 border border-slate-200 text-left">Fecha</th>
+              <th class="px-2 py-2 border border-slate-200 text-left">Hora</th>
+              <th class="px-2 py-2 border border-slate-200 text-left">Usuario</th>
+              <th class="px-2 py-2 border border-slate-200 text-left">Cliente</th>
+              <th class="px-2 py-2 border border-slate-200 text-right">Peso seco</th>
+              <th class="px-2 py-2 border border-slate-200 text-right">Peso húmedo</th>
+              <th class="px-2 py-2 border border-slate-200 text-right">Ley</th>
+              <th class="px-2 py-2 border border-slate-200 text-right">Finos</th>
+              <th class="px-2 py-2 border border-slate-200 text-right">Precio compra (COP)</th>
+              <th class="px-2 py-2 border border-slate-200 text-right">Total pesos (COP)</th>
+              <th class="px-2 py-2 border border-slate-200 text-center">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyFilas" class="bg-white">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Resumen pequeño -->
+      <div class="border border-slate-200 rounded-2xl p-4 bg-slate-50 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs">
+        <div class="space-y-1">
+          <p class="text-[11px] uppercase tracking-wide text-slate-600 font-semibold">
+            Resumen del día (movimientos)
+          </p>
+          <p class="text-slate-600">
+            Peso seco total:
+            <span id="resumenTotalPesoSeco" class="font-mono font-bold">0,000</span>
+          </p>
+          <p class="text-slate-600">
+            Peso húmedo total:
+            <span id="resumenTotalPesoHumedo" class="font-mono font-bold">0,000</span>
+          </p>
+          <p class="text-slate-600">
+            Compra total:
+            <span id="resumenTotalCompra" class="font-mono font-bold">0</span> COP
+          </p>
+        </div>
+        <div class="border border-emerald-200 bg-white rounded-2xl px-4 py-3 flex-1 flex items-center justify-between">
+          <span class="text-sm font-semibold text-emerald-700">
+            Finos del día
+          </span>
+          <span class="text-xl font-bold font-mono text-emerald-800">
+            <span id="resumenTotalFinos">0,00</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRES CUADROS: VALES / DEBEMOS / GASTOS EXTRA -->
+    <section class="grid md:grid-cols-3 gap-4 text-xs">
+      <!-- Vales -->
+      <div class="border border-slate-200 rounded-2xl p-3 bg-slate-50 space-y-2">
+        <p class="font-semibold text-slate-800">Vales</p>
+        <div class="space-y-1">
+          <input id="inputValeConcepto"
+                 class="w-full border border-slate-300 rounded-xl px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="Concepto" />
+        </div>
+        <div class="space-y-1">
+          <input id="inputValeMonto" type="text"
+                 class="w-full border border-slate-300 rounded-xl px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="1.000.000" />
+        </div>
+        <button id="btnAgregarVale"
+                class="w-full text-[11px] bg-slate-900 hover:bg-slate-800 text-white font-semibold px-2 py-1.5 rounded-full transition">
+          + Agregar vale
+        </button>
+        <p class="text-slate-600 mt-1">
+          Total: <span id="totalValesDia" class="font-mono font-bold">0</span> COP
+        </p>
+        <div class="border border-slate-200 rounded-xl bg-white max-h-40 overflow-y-auto mt-1">
+          <table class="min-w-full text-[11px]">
+            <thead class="bg-slate-100">
+              <tr>
+                <th class="px-2 py-1 border border-slate-200 text-left">Fecha</th>
+                <th class="px-2 py-1 border border-slate-200 text-left">Hora</th>
+                <th class="px-2 py-1 border border-slate-200 text-left">Concepto</th>
+                <th class="px-2 py-1 border border-slate-200 text-right">Monto (COP)</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyVales" class="bg-white"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Debemos -->
+      <div class="border border-slate-200 rounded-2xl p-3 bg-slate-50 space-y-2">
+        <p class="font-semibold text-slate-800">Debemos</p>
+        <div class="space-y-1">
+          <input id="inputDebemosCliente"
+                 class="w-full border border-slate-300 rounded-xl px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="Cliente" />
+        </div>
+        <div class="space-y-1">
+          <input id="inputDebemosConcepto"
+                 class="w-full border border-slate-300 rounded-xl px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="Concepto" />
+        </div>
+        <div class="space-y-1">
+          <input id="inputDebemosMonto" type="text"
+                 class="w-full border border-slate-300 rounded-xl px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="Monto a pagar (COP)" />
+        </div>
+        <button id="btnAgregarDeuda"
+                class="w-full text-[11px] bg-slate-900 hover:bg-slate-800 text-white font-semibold px-2 py-1.5 rounded-full transition">
+          + Registrar deuda
+        </button>
+
+        <div class="border border-slate-200 rounded-xl bg-white max-h-40 overflow-y-auto mt-2">
+          <table class="min-w-full text-[11px]">
+            <thead class="bg-slate-100">
+              <tr>
+                <th class="px-2 py-1 border border-slate-200 text-left">Cliente</th>
+                <th class="px-2 py-1 border border-slate-200 text-left">Concepto</th>
+                <th class="px-2 py-1 border border-slate-200 text-right">Inicial</th>
+                <th class="px-2 py-1 border border-slate-200 text-right">Pendiente</th>
+                <th class="px-2 py-1 border border-slate-200 text-center">Pago</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyDebemos" class="bg-white"></tbody>
+          </table>
+        </div>
+        <p class="text-slate-600">
+          Recibido: <span id="totalDebemosRecibidos" class="font-mono font-bold">0</span> COP
+        </p>
+        <p class="text-slate-600">
+          Pendiente: <span id="totalDebemosPendientes" class="font-mono font-bold">0</span> COP
+        </p>
+      </div>
+
+      <!-- Gastos extra -->
+      <div class="border border-slate-200 rounded-2xl p-3 bg-slate-50 space-y-2">
+        <p class="font-semibold text-slate-800">Gastos extra</p>
+        <div class="space-y-1">
+          <input id="inputGastoConcepto"
+                 class="w-full border border-slate-300 rounded-xl px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="Concepto" />
+        </div>
+        <div class="space-y-1">
+          <input id="inputGastoMonto" type="text"
+                 class="w-full border border-slate-300 rounded-xl px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                 placeholder="Monto (COP)" />
+        </div>
+        <button id="btnAgregarGastoExtra"
+                class="w-full text-[11px] bg-slate-900 hover:bg-slate-800 text-white font-semibold px-2 py-1.5 rounded-full transition">
+          + Agregar gasto
+        </button>
+        <p class="text-slate-600 mt-1">
+          Total: <span id="totalGastosExtrasDia" class="font-mono font-bold">0</span> COP
+        </p>
+        <div class="border border-slate-200 rounded-xl bg-white max-h-40 overflow-y-auto mt-1">
+          <table class="min-w-full text-[11px]">
+            <thead class="bg-slate-100">
+              <tr>
+                <th class="px-2 py-1 border border-slate-200 text-left">Fecha</th>
+                <th class="px-2 py-1 border border-slate-200 text-left">Hora</th>
+                <th class="px-2 py-1 border border-slate-200 text-left">Concepto</th>
+                <th class="px-2 py-1 border border-slate-200 text-right">Monto (COP)</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyGastosExtras" class="bg-white"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Botón FABRICACIÓN DE JOYAS -->
+    <section class="mt-4">
+      <div class="flex justify-end">
+        <button id="btnFabricacionJoyas"
+                class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-semibold px-4 py-2 rounded-full transition">
+          FABRICACIÓN DE JOYAS · Cerrar hoja
+        </button>
+      </div>
+    </section>
+
+    <!-- Panel de fabricación de joyas / utilidad -->
+    <section id="panelFabricacion" class="hidden border border-slate-200 rounded-2xl p-4 bg-slate-50 space-y-4 mt-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-slate-800">
+          Cierre de hoja · Fabricación de joyas
+        </h2>
+        <button id="btnCerrarPanelFabricacion"
+                class="text-xs text-slate-500 hover:text-slate-700">
+          Cerrar ✕
+        </button>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 text-xs">
+        <!-- Datos que ingresa el cliente -->
+        <div class="space-y-2">
+          <div class="space-y-1">
+            <label class="block text-slate-700">Finos de fabricación</label>
+            <input type="text" id="inputFinosFabricacion"
+                   class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                   placeholder="1.236,52" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-slate-700">Precio de venta total (COP)</label>
+            <input type="text" id="inputPrecioVenta"
+                   class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                   placeholder="1.000.000" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-slate-700">Viáticos (COP)</label>
+            <input type="text" id="inputViaticos"
+                   class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                   placeholder="0" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-slate-700">Gastos (COP)</label>
+            <input type="text" id="inputGastos"
+                   class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                   placeholder="0" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-slate-700">Bogotá (COP)</label>
+            <input type="text" id="inputBogota"
+                   class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                   placeholder="0" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-slate-700">Otros (COP)</label>
+            <input type="text" id="inputOtros"
+                   class="w-full border border-slate-300 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                   placeholder="0" />
+          </div>
+        </div>
+
+        <!-- Resultados de utilidad -->
+        <div class="space-y-2">
+          <!-- Comparación de finos -->
+          <div class="border border-slate-200 rounded-xl bg-white p-3 space-y-1">
+            <p class="text-slate-600">
+              Finos compra:
+              <span id="panelFinosCompra" class="font-mono font-bold">0,00</span>
+            </p>
+            <p class="text-slate-600">
+              Finos venta:
+              <span id="panelFinosVenta" class="font-mono font-bold">0,00</span>
+            </p>
+            <p class="text-slate-700 font-semibold">
+              Finos diferencia:
+              <span id="panelFinosDiferencia" class="font-mono">0,00</span>
+            </p>
+          </div>
+
+          <!-- Comparación de precios -->
+          <div class="border border-slate-200 rounded-xl bg-white p-3 space-y-1">
+            <p class="text-slate-600">
+              Precio compra:
+              <span id="panelPrecioCompra" class="font-mono font-bold">0</span> COP
+            </p>
+            <p class="text-slate-600">
+              Precio venta:
+              <span id="panelPrecioVentaTexto" class="font-mono font-bold">0</span> COP
+            </p>
+            <p class="text-slate-700 font-semibold">
+              Utilidad:
+              <span id="panelUtilidadBruta" class="font-mono">0</span> COP
+            </p>
+          </div>
+
+          <!-- Total neto (saldo final) -->
+          <div class="border border-emerald-200 rounded-xl bg-emerald-50 p-3 space-y-1">
+            <p class="text-slate-600">
+              Total gastos cierre:
+              <span id="panelTotalGastos" class="font-mono">0</span> COP
+            </p>
+            <p class="text-slate-800 font-bold text-sm">
+              Total neto (saldo final):
+              <span id="panelTotalNeto" class="font-mono text-emerald-700">0</span> COP
+            </p>
+          </div>
+
+          <button id="btnGuardarCierreHoja"
+                  class="w-full text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 rounded-full transition">
+            Guardar cierre y crear nueva hoja
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Historial de hojas + selector con dashboard tipo empresa -->
+    <section class="border border-slate-200 rounded-2xl p-4 bg-white space-y-3 text-xs mt-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+        <div>
+          <h2 class="text-sm font-semibold text-slate-800">Historial de hojas</h2>
+          <p class="text-[11px] text-slate-500">
+            Selecciona una hoja para ver su resumen detallado, gráficos y exportarla.
+          </p>
+        </div>
+        <div class="flex flex-col md:flex-row md:items-center gap-2">
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] text-slate-600">Ver hoja:</span>
+            <select id="selectHoja"
+                    class="border border-slate-300 rounded-xl px-2 py-1 text-[11px] focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </select>
+          </div>
+          <div class="flex gap-2">
+            <button id="btnExportCSVHistorial"
+                    class="text-[11px] bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-3 py-1.5 rounded-full transition">
+              CSV hoja seleccionada
+            </button>
+            <button id="btnExportXLSHistorial"
+                    class="text-[11px] bg-sky-500 hover:bg-sky-600 text-white font-semibold px-3 py-1.5 rounded-full transition">
+              XLSX hoja seleccionada
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="listaHojasHistorial" class="space-y-2">
+        <!-- Dashboard detallado de la hoja seleccionada -->
+      </div>
+    </section>
+
+    <!-- Marca de agua NeuraCoreApps.dev -->
+    <div class="mt-4 flex justify-end">
+      <span class="text-[10px] tracking-[0.35em] uppercase font-semibold text-slate-700/80 select-none">
+        Powered by NeuraCoreApps.dev
+      </span>
+    </div>
+  </div>
+  <!-- Lógica de la aplicación -->
+  <script>
+    // ===== EVITAR DOBLE EJECUCIÓN EN GITHUB PAGES =====
+if (window.__LOGIN_INIT__) {
+  console.warn("Login ya inicializado. Bloqueado segundo arranque.");
+  throw new Error("Bloqueo de doble inicialización");
+}
+window.__LOGIN_INIT__ = true;
+
+    // ========== SISTEMA DE LOGIN ==========
+    const AUTH_KEY = "goldflow_auth_v2";
+    const USERS_KEY = "goldflow_users";
+    let usuarioAutenticado = null;
+    let isRegisterMode = false;
+
+    function verificarAutenticacion() {
+      const authData = localStorage.getItem(AUTH_KEY);
+      if (authData) {
+        try {
+          usuarioAutenticado = JSON.parse(authData);
+          document.getElementById("loginOverlay").classList.add("hidden");
+          document.getElementById("appContent").classList.remove("hidden");
+        } catch (e) {
+          console.error("Error al cargar datos de autenticación:", e);
+          mostrarLogin();
+        }
+      } else {
+        mostrarLogin();
+      }
+    }
+
+    function mostrarLogin() {
+      document.getElementById("loginOverlay").classList.remove("hidden");
+      document.getElementById("appContent").classList.add("hidden");
+      resetLoginForm();
+    }
+
+    function resetLoginForm() {
+      document.getElementById("loginForm").reset();
+      isRegisterMode = false;
+      document.getElementById("registerNameField").classList.add("hidden");
+      document.getElementById("registerConfirmPassword").classList.add("hidden");
+      document.getElementById("loginSubtitle").textContent = "Inicia sesión para continuar";
+      document.getElementById("submitAuthButton").textContent = "Iniciar sesión";
+      document.getElementById("toggleAuthText").textContent = "¿No tienes cuenta?";
+      document.getElementById("toggleAuthMode").textContent = "Regístrate";
+    }
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      if (isRegisterMode) {
+        document.getElementById("loginSubtitle").textContent = "Crea tu cuenta";
+        document.getElementById("submitAuthButton").textContent = "Registrarse";
+        document.getElementById("toggleAuthText").textContent = "¿Ya tienes cuenta?";
+        document.getElementById("toggleAuthMode").textContent = "Inicia sesión";
+        document.getElementById("registerNameField").classList.remove("hidden");
+        document.getElementById("registerConfirmPassword").classList.remove("hidden");
+      } else {
+        document.getElementById("loginSubtitle").textContent = "Inicia sesión para continuar";
+        document.getElementById("submitAuthButton").textContent = "Iniciar sesión";
+        document.getElementById("toggleAuthText").textContent = "¿No tienes cuenta?";
+        document.getElementById("toggleAuthMode").textContent = "Regístrate";
+        document.getElementById("registerNameField").classList.add("hidden");
+        document.getElementById("registerConfirmPassword").classList.add("hidden");
+      }
+    }
+
+    function getUsers() {
+      try {
+        const users = localStorage.getItem(USERS_KEY);
+        return users ? JSON.parse(users) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveUsers(users) {
+      try {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      } catch (e) {
+        console.error("Error al guardar usuarios:", e);
+      }
+    }
+
+    function registerUser(name, email, password) {
+      const users = getUsers();
+      if (users.find(user => user.email === email)) {
+        return { success: false, message: "El correo electrónico ya está registrado" };
+      }
+      const newUser = {
+        id: 'user_' + Date.now(),
+        name,
+        email,
+        password: btoa(password),
+        createdAt: new Date().toISOString()
+      };
+      users.push(newUser);
+      saveUsers(users);
+      return { success: true, user: newUser };
+    }
+
+    function loginUser(email, password) {
+      const users = getUsers();
+      const user = users.find(u => u.email === email && u.password === btoa(password));
+      if (user) {
+        return { success: true, user };
+      } else {
+        return { success: false, message: "Credenciales incorrectas" };
+      }
+    }
+
+    function handleAuthSubmit(e) {
+  e.preventDefault();
+
+  const correo = document.getElementById("loginEmail")?.value?.trim();
+  const clave = document.getElementById("loginPassword")?.value?.trim();
+  const nombre = document.getElementById("registerName")?.value?.trim();
+  const confirmar = document.getElementById("confirmPassword")?.value?.trim();
+
+  const enRegistro = !document.getElementById("registerNameField").classList.contains("hidden");
+
+  let result;
+
+  if (!enRegistro) {
+    if (!correo || !clave) return alert("Por favor completa el correo y la contraseña.");
+
+    result = loginUser(correo, clave);
+
+    if (!result.success) {
+      const auto = registerUser(correo.split("@")[0] || "Usuario", correo, clave);
+      if (auto.success) result = auto;
+    }
+  } else {
+    if (!nombre) return alert("Ingresa tu nombre.");
+    if (clave !== confirmar) return alert("Las contraseñas no coinciden.");
+    if (clave.length < 6) return alert("La contraseña debe tener al menos 6 caracteres.");
+    result = registerUser(nombre, correo, clave);
+  }
+
+  if (result?.success) {
+    usuarioAutenticado = result.user;
+    localStorage.setItem(AUTH_KEY, JSON.stringify(usuarioAutenticado));
+    mostrarPanel();        // ✅ ENTRA SIN RECARGAR
+  } else {
+    alert(result?.message || "No se pudo iniciar sesión.");
+  }
+}
+
+
+
+function handleGoogleSignIn() {
+  // Login con Google desactivado.
+  console.log("Login con Google desactivado (solo decorativo).");
+  // Si quieres, puedes mostrar un mensaje:
+  // alert("La opción 'Continuar con Google' está desactivada por ahora.");
+}
+
+
+    function cerrarSesion() {
+      usuarioAutenticado = null;
+      localStorage.removeItem(AUTH_KEY);
+      mostrarLogin();
+    }
+
+    function initializeDemoUser() {
+      const users = getUsers();
+      const demoUserExists = users.find(user => user.email === 'demo@goldflow.com');
+      if (!demoUserExists) {
+        const demoUser = {
+          id: 'demo_user',
+          name: 'Usuario Demo',
+          email: 'demo@goldflow.com',
+          password: btoa('123456'),
+          createdAt: new Date().toISOString()
+        };
+        users.push(demoUser);
+        saveUsers(users);
+      }
+    }
+
+    // Inicializar cuando carga la página
+    initializeDemoUser();
+    verificarAutenticacion();
+
+    // Agregar eventos del login
+    document.getElementById("toggleAuthMode").addEventListener("click", toggleAuthMode);
+    document.getElementById("loginForm").addEventListener("submit", handleAuthSubmit);
+    document.getElementById("googleSignIn").addEventListener("click", handleGoogleSignIn);
+    document.getElementById("btnCerrarSesion").addEventListener("click", cerrarSesion);
+    // ========== FIN DEL SISTEMA DE LOGIN ==========
+
+    // ========== CÓDIGO ORIGINAL DE LA APLICACIÓN ==========
+    const STORAGE_PREFIX = "libroContable_v5_";
+    const STORAGE_KEY_HOJAS = STORAGE_PREFIX + "hojas";
+    const STORAGE_KEY_USUARIOS = STORAGE_PREFIX + "usuarios";
+    const STORAGE_KEY_ULTIMO_USUARIO = STORAGE_PREFIX + "usuarioActual";
+
+    let selectedHistorialHojaId = null; // hoja seleccionada en historial
+
+    function formatearFecha(fecha = new Date()) {
+      const yyyy = fecha.getFullYear();
+      const mm = String(fecha.getMonth() + 1).padStart(2, "0");
+      const dd = String(fecha.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function formatearHora(fecha = new Date()) {
+      const hh = String(fecha.getHours()).padStart(2, "0");
+      const mm = String(fecha.getMinutes()).padStart(2, "0");
+      const ss = String(fecha.getSeconds()).padStart(2, "0");
+      return `${hh}:${mm}:${ss}`;
+    }
+
+    function toNumber(value) {
+      if (value === null || value === undefined) return 0;
+      let v = String(value).trim();
+      if (v === "") return 0;
+
+      if (v.includes(",") && v.includes(".")) {
+        v = v.replace(/\./g, "");
+        v = v.replace(",", ".");
+      } else if (v.includes(",")) {
+        v = v.replace(",", ".");
+      } else {
+        const dots = (v.match(/\./g) || []).length;
+        if (dots > 1) {
+          v = v.replace(/\./g, "");
+        }
+      }
+
+      const n = parseFloat(v);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function formatCOP(n) {
+      const num = toNumber(n);
+      return num.toLocaleString("es-CO", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      });
+    }
+
+    function format2Dec(n) {
+      const num = toNumber(n);
+      return num.toLocaleString("es-CO", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatLeyDisplay(n) {
+      const num = toNumber(n);
+      return num.toFixed(3).replace(".", ",");
+    }
+
+    // LEY SIEMPRE POSITIVA, TRUNCADA A 3 DECIMALES
+    // Fórmula: (pesoSeco - pesoHumedo) * 23.03 / pesoSeco - 2.19
+    function calcularLey(pesoSeco, pesoHumedo) {
+      const bruto = toNumber(pesoSeco);
+      const humedo = toNumber(pesoHumedo);
+      if (bruto <= 0) return 0;
+      const resultado = ((bruto - humedo) * 23.03) / bruto - 2.19;
+      if (!isFinite(resultado)) return 0;
+      const leyPositiva = Math.abs(resultado);
+      const truncada = Math.trunc(leyPositiva * 1000) / 1000; // 3 decimales sin redondear
+      return truncada;
+    }
+
+    // FINOS SIEMPRE POSITIVOS, TRUNCADOS A 2 DECIMALES
+    // Fórmula: pesoSeco * ley
+    function calcularFinos(pesoSeco, ley) {
+      const ps = toNumber(pesoSeco);
+      const l = toNumber(ley);
+      if (ps <= 0 || l === 0) return 0;
+      const bruto = Math.abs(ps * l);
+      const truncados = Math.trunc(bruto * 100) / 100; // 2 decimales sin redondear
+      return truncados;
+    }
+
+    function calcularTotalPesos(finos, precioCompra) {
+      const f = toNumber(finos);
+      const p = toNumber(precioCompra);
+      const r = f * p;
+      return parseFloat(r.toFixed(0));
+    }
+
+    function cargarHojas() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY_HOJAS);
+        if (!data) return [];
+        const parsed = JSON.parse(data);
+
+        if (Array.isArray(parsed)) return parsed;
+        if (parsed && typeof parsed === "object" && parsed.filas) {
+          return [parsed];
+        }
+        return [];
+      } catch (e) {
+        console.error("Error al leer hojas:", e);
+        return [];
+      }
+    }
+
+    function guardarHojas(hojas) {
+      try {
+        localStorage.setItem(STORAGE_KEY_HOJAS, JSON.stringify(hojas));
+      } catch (e) {
+        console.error("Error al guardar hojas:", e);
+      }
+    }
+
+    function cargarUsuarios() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY_USUARIOS);
+        if (!data) return [];
+        let arr = JSON.parse(data);
+        if (!Array.isArray(arr)) return [];
+        if (arr.length > 0 && typeof arr[0] === "string") {
+          const ahora = new Date();
+          const fecha = formatearFecha(ahora);
+          const hora = formatearHora(ahora);
+          arr = arr.map(nombre => ({
+            nombre,
+            fechaRegistro: fecha,
+            horaRegistro: hora
+          }));
+          localStorage.setItem(STORAGE_KEY_USUARIOS, JSON.stringify(arr));
+        }
+        return arr;
+      } catch (e) {
+        console.error("Error al leer usuarios:", e);
+        return [];
+      }
+    }
+
+    function guardarUsuarios(usuarios) {
+      try {
+        localStorage.setItem(STORAGE_KEY_USUARIOS, JSON.stringify(usuarios));
+      } catch (e) {
+        console.error("Error al guardar usuarios:", e);
+      }
+    }
+
+    function guardarUsuarioActual(nombre) {
+      try {
+        localStorage.setItem(STORAGE_KEY_ULTIMO_USUARIO, nombre || "");
+      } catch (e) {
+        console.error("Error al guardar usuario actual:", e);
+      }
+    }
+
+    function cargarUsuarioActual() {
+      try {
+        return localStorage.getItem(STORAGE_KEY_ULTIMO_USUARIO) || "";
+      } catch (e) {
+        return "";
+      }
+    }
+
+    let hojas = cargarHojas();
+    let hojaActual = null;
+    let usuarios = cargarUsuarios();
+
+    function crearNuevaHoja() {
+      const ahora = new Date();
+      return {
+        id: "hoja_" + ahora.getTime(),
+        fechaCreacion: formatearFecha(ahora),
+        horaCreacion: formatearHora(ahora),
+        cerrado: false,
+        filas: [],
+        cierre: null,
+        saldoInicial: 0,
+        vales: [],
+        debemos: [],
+        gastosExtras: []
+      };
+    }
+
+    function asegurarEstructurasHoja(hoja) {
+      if (!hoja) return;
+      if (!Array.isArray(hoja.filas)) hoja.filas = [];
+      if (!Array.isArray(hoja.vales)) hoja.vales = [];
+      if (!Array.isArray(hoja.debemos)) hoja.debemos = [];
+      if (!Array.isArray(hoja.gastosExtras)) hoja.gastosExtras = [];
+      if (typeof hoja.saldoInicial !== "number") hoja.saldoInicial = toNumber(hoja.saldoInicial);
+      hoja.debemos.forEach(d => {
+        if (typeof d.esArrastrada !== "boolean") d.esArrastrada = false;
+      });
+    }
+
+    function actualizarInfoHojaActual() {
+      const infoHoja = document.getElementById("infoHojaActual");
+      const infoFecha = document.getElementById("infoHojaFecha");
+      if (!hojaActual) return;
+      infoHoja.textContent = hojaActual.cerrado ? "Hoja cerrada" : "Hoja abierta";
+      infoFecha.textContent = `Creada: ${hojaActual.fechaCreacion} ${hojaActual.horaCreacion}`;
+    }
+
+    function inicializarHojaActual() {
+      hojaActual = hojas.slice().reverse().find(h => !h.cerrado) || null;
+      if (!hojaActual) {
+        hojaActual = crearNuevaHoja();
+        hojas.push(hojaActual);
+        guardarHojas(hojas);
+      } else {
+        asegurarEstructurasHoja(hojaActual);
+      }
+      actualizarInfoHojaActual();
+    }
+
+    function renderUsuariosDatalist() {
+      const dl = document.getElementById("listaUsuarios");
+      dl.innerHTML = "";
+      usuarios.forEach(u => {
+        const nombre = typeof u === "string" ? u : u.nombre;
+        const opt = document.createElement("option");
+        opt.value = nombre;
+        dl.appendChild(opt);
+      });
+    }
+
+    function actualizarUsuarioInfoRegistro(usuario) {
+      const p = document.getElementById("usuarioInfoRegistro");
+      if (!usuario) {
+        p.textContent = "";
+        return;
+      }
+      const fecha = usuario.fechaRegistro || formatearFecha();
+      const hora = usuario.horaRegistro || formatearHora();
+      p.textContent = `Registro: ${fecha} ${hora}`;
+    }
+
+    function recalcularFilaEnMemoria(fila) {
+      const ley = calcularLey(fila.pesoSeco, fila.pesoHumedo);
+      fila.ley = ley;
+      const finos = calcularFinos(fila.pesoSeco, fila.ley);
+      fila.finos = finos;
+      const total = calcularTotalPesos(fila.finos, fila.precioCompra);
+      fila.totalPesos = total;
+    }
+
+    function actualizarResumen() {
+      if (!hojaActual) return;
+      let totalPesoSeco = 0;
+      let totalPesoHumedo = 0;
+      let totalFinos = 0;
+      let totalCompra = 0;
+
+      hojaActual.filas.forEach(f => {
+        totalPesoSeco += toNumber(f.pesoSeco);
+        totalPesoHumedo += toNumber(f.pesoHumedo);
+        totalFinos += toNumber(f.finos);
+        totalCompra += toNumber(f.totalPesos);
+      });
+
+      document.getElementById("resumenTotalPesoSeco").textContent =
+        toNumber(totalPesoSeco).toFixed(3).replace(".", ",");
+      document.getElementById("resumenTotalPesoHumedo").textContent =
+        toNumber(totalPesoHumedo).toFixed(3).replace(".", ",");
+      document.getElementById("resumenTotalFinos").textContent =
+        format2Dec(totalFinos);
+      document.getElementById("resumenTotalCompra").textContent =
+        formatCOP(totalCompra);
+    }
+
+    function renderTabla() {
+      const tbody = document.getElementById("tbodyFilas");
+      tbody.innerHTML = "";
+      if (!hojaActual) return;
+
+      hojaActual.filas.forEach((fila, index) => {
+        recalcularFilaEnMemoria(fila);
+
+        const tr = document.createElement("tr");
+
+        function crearInputTextoPlano(valor, extraClasses = "", readOnly = false, alignRight = false) {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = valor || "";
+          input.className =
+            "w-full bg-transparent px-1 py-0.5 focus:outline-none " +
+            (readOnly ? "text-slate-600" : "text-slate-800") +
+            (alignRight ? " text-right" : " text-left") +
+            " " + extraClasses;
+          if (readOnly) input.readOnly = true;
+          return input;
+        }
+
+        const tdFecha = document.createElement("td");
+        tdFecha.className = "px-2 py-1 border border-slate-200";
+        const inputFecha = crearInputTextoPlano(fila.fecha, "text-xs text-slate-700", true, false);
+        tdFecha.appendChild(inputFecha);
+        tr.appendChild(tdFecha);
+
+        const tdHora = document.createElement("td");
+        tdHora.className = "px-2 py-1 border border-slate-200";
+        const inputHora = crearInputTextoPlano(fila.hora, "text-xs text-slate-700", true, false);
+        tdHora.appendChild(inputHora);
+        tr.appendChild(tdHora);
+
+        const tdUsuario = document.createElement("td");
+        tdUsuario.className = "px-2 py-1 border border-slate-200";
+        const inputUsuario = crearInputTextoPlano(fila.usuario, "text-xs text-slate-700", true, false);
+        tdUsuario.appendChild(inputUsuario);
+        tr.appendChild(tdUsuario);
+
+        const tdCliente = document.createElement("td");
+        tdCliente.className = "px-2 py-1 border border-slate-200";
+        const inputCliente = crearInputTextoPlano(fila.cliente, "text-xs", false, false);
+        inputCliente.addEventListener("change", () => {
+
+          fila.cliente = inputCliente.value;
+          guardarHojas(hojas);
+        });
+        tdCliente.appendChild(inputCliente);
+        tr.appendChild(tdCliente);
+
+        const tdPesoSeco = document.createElement("td");
+        tdPesoSeco.className = "px-2 py-1 border border-slate-200";
+        const inputPesoSeco = crearInputTextoPlano(fila.pesoSeco, "text-xs font-mono", false, true);
+        inputPesoSeco.placeholder = "0,000";
+        tdPesoSeco.appendChild(inputPesoSeco);
+        tr.appendChild(tdPesoSeco);
+
+        const tdPesoHumedo = document.createElement("td");
+        tdPesoHumedo.className = "px-2 py-1 border border-slate-200";
+        const inputPesoHumedo = crearInputTextoPlano(fila.pesoHumedo, "text-xs font-mono", false, true);
+        inputPesoHumedo.placeholder = "0,000";
+        tdPesoHumedo.appendChild(inputPesoHumedo);
+        tr.appendChild(tdPesoHumedo);
+
+        const tdLey = document.createElement("td");
+        tdLey.className = "px-2 py-1 border border-slate-200";
+        const inputLey = crearInputTextoPlano(
+          fila.ley ? formatLeyDisplay(fila.ley) : "0,000",
+          "text-xs text-emerald-700 font-mono",
+          true,
+          true
+        );
+        tdLey.appendChild(inputLey);
+        tr.appendChild(tdLey);
+
+        const tdFinos = document.createElement("td");
+        tdFinos.className = "px-2 py-1 border border-slate-200";
+        const inputFinos = crearInputTextoPlano(
+          fila.finos ? format2Dec(fila.finos) : "0,00",
+          "text-xs text-emerald-700 font-mono",
+          true,
+          true
+        );
+        tdFinos.appendChild(inputFinos);
+        tr.appendChild(tdFinos);
+
+        const tdPrecioCompra = document.createElement("td");
+        tdPrecioCompra.className = "px-2 py-1 border border-slate-200";
+        const inputPrecioCompra = crearInputTextoPlano(
+          fila.precioCompra ? formatCOP(fila.precioCompra) : "",
+          "text-xs font-mono",
+          false,
+          true
+        );
+        inputPrecioCompra.placeholder = "1.000.000";
+        tdPrecioCompra.appendChild(inputPrecioCompra);
+        tr.appendChild(tdPrecioCompra);
+
+        const tdTotalPesos = document.createElement("td");
+        tdTotalPesos.className = "px-2 py-1 border border-slate-200";
+        const inputTotalPesos = crearInputTextoPlano(
+          fila.totalPesos ? formatCOP(fila.totalPesos) : "",
+          "text-xs font-mono",
+          true,
+          true
+        );
+        tdTotalPesos.appendChild(inputTotalPesos);
+        tr.appendChild(tdTotalPesos);
+
+        const tdAccion = document.createElement("td");
+        tdAccion.className = "px-2 py-1 border border-slate-200 text-center";
+        const btnEliminar = document.createElement("button");
+        btnEliminar.textContent = "✕";
+        btnEliminar.className =
+          "text-[11px] px-2 py-1 rounded-full bg-red-100 text-red-700 hover:bg-red-200";
+        btnEliminar.addEventListener("click", () => {
+          hojaActual.filas.splice(index, 1);
+          guardarHojas(hojas);
+          renderTabla();
+          renderSaldoDisponible();
+        });
+        tdAccion.appendChild(btnEliminar);
+        tr.appendChild(tdAccion);
+
+        function recalcularYActualizarInputs() {
+          recalcularFilaEnMemoria(fila);
+          inputLey.value = formatLeyDisplay(fila.ley);
+          inputFinos.value = format2Dec(fila.finos);
+          inputTotalPesos.value = fila.totalPesos ? formatCOP(fila.totalPesos) : "";
+          guardarHojas(hojas);
+          actualizarResumen();
+          renderSaldoDisponible();
+        }
+
+        inputPesoSeco.addEventListener("change", () => {
+
+          fila.pesoSeco = inputPesoSeco.value;
+          recalcularYActualizarInputs();
+        });
+
+        inputPesoHumedo.addEventListener("change", () => {
+
+          fila.pesoHumedo = inputPesoHumedo.value;
+          recalcularYActualizarInputs();
+        });
+
+        inputPrecioCompra.addEventListener("change", () => {
+
+          fila.precioCompra = toNumber(inputPrecioCompra.value);
+          fila.totalPesos = calcularTotalPesos(fila.finos, fila.precioCompra);
+          inputTotalPesos.value = fila.totalPesos ? formatCOP(fila.totalPesos) : "";
+          guardarHojas(hojas);
+          actualizarResumen();
+          renderSaldoDisponible();
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      actualizarResumen();
+    }
+
+    function calcularFlujosSaldos(hoja) {
+      if (!hoja) return {
+        saldoInicial: 0,
+        totalVales: 0,
+        totalGastosExtras: 0,
+        totalDebemosRecibidos: 0,
+        totalPagosDebemos: 0,
+        totalCompras: 0
+      };
+      let totalVales = 0;
+      let totalGastosExtras = 0;
+      let totalDebemosRecibidos = 0;
+      let totalPagosDebemos = 0;
+      let totalCompras = 0;
+
+      (hoja.vales || []).forEach(v => {
+        totalVales += toNumber(v.monto);
+      });
+
+      (hoja.gastosExtras || []).forEach(g => {
+        totalGastosExtras += toNumber(g.monto);
+      });
+
+      (hoja.debemos || []).forEach(d => {
+        if (!d.esArrastrada) {
+          totalDebemosRecibidos += toNumber(d.montoInicial);
+        }
+        (d.pagos || []).forEach(p => {
+          totalPagosDebemos += toNumber(p.monto);
+        });
+      });
+
+      (hoja.filas || []).forEach(f => {
+        totalCompras += toNumber(f.totalPesos);
+      });
+
+      return {
+        saldoInicial: toNumber(hoja.saldoInicial),
+        totalVales,
+        totalGastosExtras,
+        totalDebemosRecibidos,
+        totalPagosDebemos,
+        totalCompras
+      };
+    }
+
+    function calcularSaldoDisponible(hoja) {
+      const {
+        saldoInicial,
+        totalVales,
+        totalGastosExtras,
+        totalDebemosRecibidos,
+        totalPagosDebemos,
+        totalCompras
+      } = calcularFlujosSaldos(hoja);
+
+      return saldoInicial
+        + totalDebemosRecibidos
+        - totalCompras
+        - totalVales
+        - totalGastosExtras
+        - totalPagosDebemos;
+    }
+
+    function renderSaldoDisponible() {
+      const span = document.getElementById("saldoDisponibleActual");
+      if (!hojaActual) {
+        span.textContent = "0";
+        return;
+      }
+      const saldo = calcularSaldoDisponible(hojaActual);
+      span.textContent = formatCOP(saldo);
+    }
+
+    function actualizarDashboardDia() {
+      if (!hojaActual) return;
+      const flows = calcularFlujosSaldos(hojaActual);
+      const saldoDisponible = calcularSaldoDisponible(hojaActual);
+
+      let totalFinos = 0;
+      let totalCompra = 0;
+      hojaActual.filas.forEach(f => {
+        totalFinos += toNumber(f.finos);
+        totalCompra += toNumber(f.totalPesos);
+      });
+
+      document.getElementById("dashSaldoInicial").textContent = formatCOP(flows.saldoInicial);
+      document.getElementById("dashCompras").textContent = formatCOP(flows.totalCompras);
+      document.getElementById("dashDebemosRecibidos").textContent = formatCOP(flows.totalDebemosRecibidos);
+      document.getElementById("dashPagosDebemos").textContent = formatCOP(flows.totalPagosDebemos);
+      document.getElementById("dashVales").textContent = formatCOP(flows.totalVales);
+      document.getElementById("dashGastosExtras").textContent = formatCOP(flows.totalGastosExtras);
+      document.getElementById("dashSaldoDisponible").textContent = formatCOP(saldoDisponible);
+      document.getElementById("dashFinos").textContent = format2Dec(totalFinos);
+      document.getElementById("dashCompraTotal").textContent = formatCOP(totalCompra);
+    }
+
+    function agregarVale() {
+      if (!hojaActual) return;
+      const concepto = document.getElementById("inputValeConcepto").value.trim();
+      const monto = toNumber(document.getElementById("inputValeMonto").value);
+      if (!concepto) {
+        alert("Debes escribir un concepto para el vale.");
+        return;
+      }
+      if (monto <= 0) {
+        alert("El monto del vale debe ser mayor que 0.");
+        return;
+      }
+      const ahora = new Date();
+      hojaActual.vales.push({
+        id: "vale_" + ahora.getTime(),
+        fecha: formatearFecha(ahora),
+        hora: formatearHora(ahora),
+        concepto,
+        monto
+      });
+      guardarHojas(hojas);
+      document.getElementById("inputValeConcepto").value = "";
+      document.getElementById("inputValeMonto").value = "";
+      renderVales();
+      renderSaldoDisponible();
+    }
+
+    function renderVales() {
+      const tbody = document.getElementById("tbodyVales");
+      tbody.innerHTML = "";
+      if (!hojaActual) return;
+      let totalVales = 0;
+      hojaActual.vales.forEach(v => {
+        totalVales += toNumber(v.monto);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="px-2 py-1 border border-slate-200">${v.fecha}</td>
+          <td class="px-2 py-1 border border-slate-200">${v.hora}</td>
+          <td class="px-2 py-1 border border-slate-200">${v.concepto}</td>
+          <td class="px-2 py-1 border border-slate-200 text-right">${formatCOP(v.monto)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById("totalValesDia").textContent = formatCOP(totalVales);
+    }
+
+    function agregarGastoExtra() {
+      if (!hojaActual) return;
+      const concepto = document.getElementById("inputGastoConcepto").value.trim();
+      const monto = toNumber(document.getElementById("inputGastoMonto").value);
+      if (!concepto) {
+        alert("El concepto del gasto es obligatorio.");
+        return;
+      }
+      if (monto <= 0) {
+        alert("El monto del gasto debe ser mayor que 0.");
+        return;
+      }
+      const ahora = new Date();
+      hojaActual.gastosExtras.push({
+        id: "gasto_" + ahora.getTime(),
+        fecha: formatearFecha(ahora),
+        hora: formatearHora(ahora),
+        concepto,
+        monto
+      });
+      guardarHojas(hojas);
+      document.getElementById("inputGastoConcepto").value = "";
+      document.getElementById("inputGastoMonto").value = "";
+      renderGastosExtras();
+      renderSaldoDisponible();
+    }
+
+    function renderGastosExtras() {
+      const tbody = document.getElementById("tbodyGastosExtras");
+      tbody.innerHTML = "";
+      if (!hojaActual) return;
+      let totalGastos = 0;
+      hojaActual.gastosExtras.forEach(g => {
+        totalGastos += toNumber(g.monto);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="px-2 py-1 border border-slate-200">${g.fecha}</td>
+          <td class="px-2 py-1 border border-slate-200">${g.hora}</td>
+          <td class="px-2 py-1 border border-slate-200">${g.concepto}</td>
+          <td class="px-2 py-1 border border-slate-200 text-right">${formatCOP(g.monto)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById("totalGastosExtrasDia").textContent = formatCOP(totalGastos);
+    }
+
+    function agregarDeuda() {
+      if (!hojaActual) return;
+      const cliente = document.getElementById("inputDebemosCliente").value.trim();
+      const concepto = document.getElementById("inputDebemosConcepto").value.trim();
+      const monto = toNumber(document.getElementById("inputDebemosMonto").value);
+      if (!cliente) {
+        alert("Debes indicar el cliente/persona de la deuda.");
+        return;
+      }
+      if (!concepto) {
+        alert("Debes escribir un concepto para la deuda.");
+        return;
+      }
+      if (monto <= 0) {
+        alert("El monto de la deuda debe ser mayor que 0.");
+        return;
+      }
+      const ahora = new Date();
+      hojaActual.debemos.push({
+        id: "deuda_" + ahora.getTime(),
+        fecha: formatearFecha(ahora),
+        hora: formatearHora(ahora),
+        cliente,
+        concepto,
+        montoInicial: monto,
+        montoPendiente: monto,
+        pagos: [],
+        esArrastrada: false
+      });
+      guardarHojas(hojas);
+      document.getElementById("inputDebemosCliente").value = "";
+      document.getElementById("inputDebemosConcepto").value = "";
+      document.getElementById("inputDebemosMonto").value = "";
+      renderDebemos();
+      renderSaldoDisponible();
+    }
+
+    function registrarPagoDeuda(index, tipo, montoTexto) {
+      const deuda = hojaActual.debemos[index];
+      if (!deuda) return;
+      let montoAbono = 0;
+      if (tipo === "total") {
+        montoAbono = toNumber(deuda.montoPendiente);
+      } else {
+        montoAbono = toNumber(montoTexto);
+      }
+      if (montoAbono <= 0) {
+        alert("El monto del pago debe ser mayor que 0.");
+        return;
+      }
+      if (montoAbono > toNumber(deuda.montoPendiente)) {
+        alert("El abono no puede ser mayor que el monto pendiente.");
+        return;
+      }
+      const ahora = new Date();
+      deuda.pagos = deuda.pagos || [];
+      deuda.pagos.push({
+        fecha: formatearFecha(ahora),
+        hora: formatearHora(ahora),
+        tipo,
+        monto: montoAbono
+      });
+      deuda.montoPendiente = toNumber(deuda.montoPendiente) - montoAbono;
+      guardarHojas(hojas);
+      renderDebemos();
+      renderSaldoDisponible();
+    }
+
+    function renderDebemos() {
+      const tbody = document.getElementById("tbodyDebemos");
+      tbody.innerHTML = "";
+      if (!hojaActual) return;
+      let totalRecibido = 0;
+      let totalPendiente = 0;
+
+      hojaActual.debemos.forEach((d, index) => {
+        if (!d.esArrastrada) {
+          totalRecibido += toNumber(d.montoInicial);
+        }
+        totalPendiente += toNumber(d.montoPendiente);
+
+        const tr = document.createElement("tr");
+        const pagosHechos = (d.pagos || []).reduce((acc, p) => acc + toNumber(p.monto), 0);
+
+        tr.innerHTML = `
+          <td class="px-2 py-1 border border-slate-200">${d.cliente}</td>
+          <td class="px-2 py-1 border border-slate-200">${d.concepto}</td>
+          <td class="px-2 py-1 border border-slate-200 text-right">${formatCOP(d.montoInicial)}</td>
+          <td class="px-2 py-1 border border-slate-200 text-right">${formatCOP(d.montoPendiente)}</td>
+          <td class="px-2 py-1 border border-slate-200 text-center">
+            <div class="flex flex-col gap-1">
+              <select class="text-[10px] border border-slate-300 rounded px-1 py-0.5" data-idx="${index}" data-role="tipoPago">
+                <option value="total">Total</option>
+                <option value="abono">Abono</option>
+              </select>
+              <input type="text" placeholder="Monto abono"
+                     class="text-[10px] border border-slate-300 rounded px-1 py-0.5 text-right"
+                     data-idx="${index}" data-role="montoPago" />
+              <button class="text-[10px] bg-emerald-500 hover:bg-emerald-600 text-white rounded px-1 py-0.5"
+                      data-idx="${index}" data-role="btnPagar">
+                Registrar pago
+              </button>
+              <span class="text-[10px] text-slate-500">
+                Pagado: ${formatCOP(pagosHechos)} COP
+              </span>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("totalDebemosRecibidos").textContent =
+        formatCOP(totalRecibido);
+      document.getElementById("totalDebemosPendientes").textContent =
+        formatCOP(totalPendiente);
+
+      tbody.querySelectorAll("button[data-role='btnPagar']").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const idx = parseInt(btn.getAttribute("data-idx"), 10);
+          const tipoSelect = tbody.querySelector(`select[data-role='tipoPago'][data-idx='${idx}']`);
+          const montoInput = tbody.querySelector(`input[data-role='montoPago'][data-idx='${idx}']`);
+          const tipo = tipoSelect.value;
+          const montoTexto = montoInput.value;
+          registrarPagoDeuda(idx, tipo, montoTexto);
+        });
+      });
+    }
+
+    function mostrarPanel() {
+  const login = document.getElementById("loginOverlay");
+  const app = document.getElementById("appContent"); // 👈 ESTE es el panel real
+
+  if (login) login.classList.add("hidden");
+  if (app) app.classList.remove("hidden");
+}
+
+// ==================== FABRICACIÓN DE JOYAS ====================
+
+// Mostrar / ocultar panel de fabricación
+function mostrarPanelFabricacion(mostrar) {
+  const panel = document.getElementById("panelFabricacion");
+  if (!panel) return;
+  panel.classList.toggle("hidden", !mostrar);
+  if (mostrar) actualizarPanelFabricacion();
+}
+
+// Actualizar cálculos del panel de fabricación
+function actualizarPanelFabricacion() {
+  if (!hojaActual) return;
+
+  let totalFinos = 0;
+  let totalCompra = 0;
+
+  hojaActual.filas.forEach(f => {
+    totalFinos += toNumber(f.finos);
+    totalCompra += toNumber(f.totalPesos);
+  });
+
+  const finosFabricacion = toNumber(document.getElementById("inputFinosFabricacion").value);
+  const precioVenta      = toNumber(document.getElementById("inputPrecioVenta").value);
+  const viaticos         = toNumber(document.getElementById("inputViaticos").value);
+  const gastos           = toNumber(document.getElementById("inputGastos").value);
+  const bogota           = toNumber(document.getElementById("inputBogota").value);
+  const otros            = toNumber(document.getElementById("inputOtros").value);
+
+  const totalGastos      = viaticos + gastos + bogota + otros;
+  const diferenciaFinos  = finosFabricacion - totalFinos;
+  const utilidadBruta    = precioVenta - totalCompra;
+  const saldoAntesCierre = calcularSaldoDisponible(hojaActual);
+  const totalNeto        = saldoAntesCierre + utilidadBruta - totalGastos;
+  const saldoDespuesCierre = saldoAntesCierre + utilidadBruta;
+
+  document.getElementById("panelFinosCompra").textContent      = format2Dec(totalFinos);
+  document.getElementById("panelFinosVenta").textContent       = format2Dec(finosFabricacion);
+  document.getElementById("panelFinosDiferencia").textContent  = format2Dec(diferenciaFinos);
+
+  document.getElementById("panelPrecioCompra").textContent     = formatCOP(totalCompra);
+  document.getElementById("panelPrecioVentaTexto").textContent = formatCOP(precioVenta);
+  document.getElementById("panelUtilidadBruta").textContent    = formatCOP(utilidadBruta);
+
+  document.getElementById("panelTotalGastos").textContent      = formatCOP(totalGastos);
+  document.getElementById("panelTotalNeto").textContent        = formatCOP(totalNeto);
+
+  document.getElementById("saldoDisponibleActual").textContent = formatCOP(saldoDespuesCierre);
+}
+
+// Listeners del panel de fabricación
+document.getElementById("btnFabricacionJoyas").addEventListener("click", () => {
+  mostrarPanelFabricacion(true);
+});
+
+document.getElementById("btnCerrarPanelFabricacion").addEventListener("click", () => {
+  mostrarPanelFabricacion(false);
+  renderSaldoDisponible();
+});
+
+[
+  "inputFinosFabricacion",
+  "inputPrecioVenta",
+  "inputViaticos",
+  "inputGastos",
+  "inputBogota",
+  "inputOtros"
+].forEach(id => {
+  document.getElementById(id).addEventListener("input", actualizarPanelFabricacion);
+});
+
+
+
+
+    function guardarCierreHoja() {
+      if (!hojaActual) return;
+      let totalFinos = 0;
+      let totalCompra = 0;
+      hojaActual.filas.forEach(f => {
+        totalFinos += toNumber(f.finos);
+        totalCompra += toNumber(f.totalPesos);
+      });
+
+      const finosFabricacion = toNumber(document.getElementById("inputFinosFabricacion").value);
+      const precioVenta = toNumber(document.getElementById("inputPrecioVenta").value);
+      const viaticos = toNumber(document.getElementById("inputViaticos").value);
+      const gastos = toNumber(document.getElementById("inputGastos").value);
+      const bogota = toNumber(document.getElementById("inputBogota").value);
+      const otros = toNumber(document.getElementById("inputOtros").value);
+
+      const totalGastos = viaticos + gastos + bogota + otros;
+      const diferenciaFinos = finosFabricacion - totalFinos;
+      const utilidadBruta = precioVenta - totalCompra;
+
+      const saldoAntesCierre = calcularSaldoDisponible(hojaActual);
+      const totalNeto = saldoAntesCierre + precioVenta - totalGastos;
+      const saldoFinal = totalNeto;
+
+      const cierre = {
+        finosFabricacion,
+        precioVenta,
+        viaticos,
+        gastos,
+        bogota,
+        otros,
+        totalFinosHoja: totalFinos,
+        totalCompraHoja: totalCompra,
+        diferenciaFinos,
+        utilidadBruta,
+        totalGastos,
+        totalNeto,
+        saldoInicial: toNumber(hojaActual.saldoInicial),
+        saldoFinal
+      };
+
+      hojaActual.cierre = cierre;
+      hojaActual.cerrado = true;
+
+      guardarHojas(hojas);
+      mostrarPanelFabricacion(false);
+      actualizarInfoHojaActual();
+      renderHistorialHojas(hojaActual.id);
+      renderSelectorHojas();
+
+      const nuevaHoja = crearNuevaHoja();
+      const deudasPendientes = (hojaActual.debemos || [])
+        .filter(d => toNumber(d.montoPendiente) > 0)
+        .map(d => ({
+          id: "deuda_" + Date.now() + "_" + Math.random().toString(36).slice(2),
+          fecha: formatearFecha(new Date()),
+          hora: formatearHora(new Date()),
+          cliente: d.cliente,
+          concepto: d.concepto,
+          montoInicial: toNumber(d.montoPendiente),
+          montoPendiente: toNumber(d.montoPendiente),
+          pagos: [],
+          esArrastrada: true
+        }));
+
+      nuevaHoja.debemos = deudasPendientes;
+      nuevaHoja.saldoInicial = saldoFinal;
+
+      hojas.push(nuevaHoja);
+      guardarHojas(hojas);
+
+      hojaActual = nuevaHoja;
+      asegurarEstructurasHoja(hojaActual);
+      actualizarInfoHojaActual();
+
+      document.getElementById("inputFinosFabricacion").value = "";
+      document.getElementById("inputPrecioVenta").value = "";
+      document.getElementById("inputViaticos").value = "";
+      document.getElementById("inputGastos").value = "";
+      document.getElementById("inputBogota").value = "";
+      document.getElementById("inputOtros").value = "";
+      document.getElementById("panelFinosCompra").textContent = "0,00";
+      document.getElementById("panelFinosVenta").textContent = "0,00";
+      document.getElementById("panelFinosDiferencia").textContent = "0,00";
+      document.getElementById("panelPrecioCompra").textContent = "0";
+      document.getElementById("panelPrecioVentaTexto").textContent = "0";
+      document.getElementById("panelUtilidadBruta").textContent = "0";
+      document.getElementById("panelTotalGastos").textContent = "0";
+      document.getElementById("panelTotalNeto").textContent = "0";
+
+      document.getElementById("inputSaldoInicial").value =
+        hojaActual.saldoInicial ? formatCOP(hojaActual.saldoInicial) : "";
+
+      if (hojaActual.filas.length === 0) {
+        agregarFila();
+      } else {
+        renderTabla();
+      }
+      renderVales();
+      renderGastosExtras();
+      renderDebemos();
+      renderSaldoDisponible();
+      renderSelectorHojas();
+    }
+
+    function fincosColorClass(value) {
+      if (value > 0) return "bg-emerald-600";
+      if (value < 0) return "bg-red-500";
+      return "bg-slate-400";
+    }
+
+    function renderHistorialHojas(selectedId = null) {
+      const cont = document.getElementById("listaHojasHistorial");
+      cont.innerHTML = "";
+      if (!hojas || hojas.length === 0) {
+        cont.textContent = "Sin hojas registradas.";
+        return;
+      }
+
+      const hojasCerradas = hojas.filter(h => h.cerrado);
+      if (hojasCerradas.length === 0) {
+        cont.textContent = "No hay hojas cerradas aún.";
+        return;
+      }
+
+      let hojaMostrar = null;
+      if (selectedId) {
+        hojaMostrar = hojasCerradas.find(h => h.id === selectedId);
+      }
+      if (!hojaMostrar) {
+        hojaMostrar = hojasCerradas[0];
+      }
+
+      selectedHistorialHojaId = hojaMostrar.id;
+
+      const h = hojaMostrar;
+      const flows = calcularFlujosSaldos(h);
+      const saldoDisponibleTeorico = calcularSaldoDisponible(h);
+      const c = h.cierre || {};
+      const totalFinos = c.totalFinosHoja || 0;
+      const totalCompra = c.totalCompraHoja || 0;
+      const finosFab = c.finosFabricacion || 0;
+      const precioVenta = c.precioVenta || 0;
+      const utilidad = c.utilidadBruta || 0;
+      const totalGastosCierre = c.totalGastos || 0;
+      const totalNeto = c.totalNeto || 0;
+      const saldoFinal = c.saldoFinal || 0;
+
+      const totalVales = flows.totalVales || 0;
+      const totalGastosExtras = flows.totalGastosExtras || 0;
+      const totalDebemosRecibidos = flows.totalDebemosRecibidos || 0;
+      const totalPagosDebemos = flows.totalPagosDebemos || 0;
+      const pendienteDebemos = (h.debemos || []).reduce(
+        (acc, d) => acc + toNumber(d.montoPendiente),
+        0
+      );
+
+      const maxFinos = Math.max(Math.abs(totalFinos), Math.abs(finosFab), 1);
+      const maxDinero = Math.max(
+        Math.abs(totalCompra),
+        Math.abs(precioVenta),
+        Math.abs(utilidad),
+        1
+      );
+
+      function barWidth(val, max) {
+        const pct = (Math.abs(val) / max) * 100;
+        return Math.min(100, pct);
+      }
+
+      const div = document.createElement("div");
+      div.className =
+        "flex flex-col gap-3 border border-slate-100 rounded-2xl px-4 py-3 bg-slate-50";
+
+      const encabezado = document.createElement("div");
+      encabezado.className = "flex flex-col md:flex-row md:items-center md:justify-between gap-1";
+      encabezado.innerHTML = `
+        <div>
+          <p class="font-semibold text-slate-800 text-sm">
+            Hoja · ${h.fechaCreacion} ${h.horaCreacion}
+          </p>
+          <p class="text-[11px] text-slate-500">
+            Estado: <span class="font-semibold">${h.cerrado ? "Cerrada" : "Abierta"}</span> · ID: ${h.id}
+          </p>
+        </div>
+        <div class="text-right text-[11px] text-slate-500">
+          <p>Saldo inicial: <span class="font-mono font-semibold text-slate-800">${formatCOP(flows.saldoInicial)}</span> COP</p>
+          <p>Saldo final (total neto): <span class="font-mono font-semibold text-emerald-700">${formatCOP(saldoFinal)}</span> COP</p>
+        </div>
+      `;
+      div.appendChild(encabezado);
+
+      const grid = document.createElement("div");
+      grid.className = "grid md:grid-cols-3 gap-3";
+
+      const card1 = document.createElement("div");
+      card1.className = "border border-slate-200 rounded-xl bg-white p-3 space-y-1 text-[11px]";
+      card1.innerHTML = `
+        <p class="uppercase text-slate-500 font-semibold tracking-wide">Flujo financiero</p>
+        <p class="text-slate-700">Compras en oro: <span class="font-mono font-bold">${formatCOP(totalCompra)}</span> COP</p>
+        <p class="text-slate-700">Debemos recibidos: <span class="font-mono font-bold">${formatCOP(totalDebemosRecibidos)}</span> COP</p>
+        <p class="text-slate-700">Pagos de deudas: <span class="font-mono font-bold">${formatCOP(totalPagosDebemos)}</span> COP</p>
+        <p class="text-slate-700">Vales: <span class="font-mono font-bold">${formatCOP(totalVales)}</span> COP</p>
+        <p class="text-slate-700">Gastos extra: <span class="font-mono font-bold">${formatCOP(totalGastosExtras)}</span> COP</p>
+        <p class="text-slate-700">Deuda pendiente: <span class="font-mono font-bold">${formatCOP(pendienteDebemos)}</span> COP</p>
+        <p class="text-[10px] text-slate-400 mt-1">
+          Saldo disponible (interno): <span class="font-mono font-semibold">${formatCOP(saldoDisponibleTeorico)}</span> COP
+        </p>
+      `;
+      grid.appendChild(card1);
+
+      const card2 = document.createElement("div");
+      card2.className = "border border-slate-200 rounded-xl bg-white p-3 space-y-2 text-[11px]";
+      card2.innerHTML = `
+        <p class="uppercase text-slate-500 font-semibold tracking-wide">Finos · Comparación</p>
+        <div class="space-y-1">
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>Finos compra</span>
+              <span>${format2Dec(totalFinos)}</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full bg-emerald-500"
+                   style="width:${barWidth(totalFinos, maxFinos)}%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>Finos venta</span>
+              <span>${format2Dec(finosFab)}</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full bg-sky-500"
+                   style="width:${barWidth(finosFab, maxFinos)}%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>Diferencia</span>
+              <span>${format2Dec(finosFab - totalFinos)}</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full ${fincosColorClass(finosFab - totalFinos)}"
+                   style="width:${barWidth(finosFab - totalFinos, maxFinos)}%"></div>
+            </div>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card2);
+
+      const maxUtilChart = Math.max(Math.abs(totalCompra), Math.abs(precioVenta), Math.abs(utilidad), 1);
+      const card3 = document.createElement("div");
+      card3.className = "border border-slate-200 rounded-xl bg-white p-3 space-y-2 text-[11px]";
+      card3.innerHTML = `
+        <p class="uppercase text-slate-500 font-semibold tracking-wide">Utilidad · Comparación</p>
+        <div class="space-y-1">
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>Precio compra</span>
+              <span>${formatCOP(totalCompra)} COP</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full bg-slate-400"
+                   style="width:${barWidth(totalCompra, maxUtilChart)}%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>Precio venta</span>
+              <span>${formatCOP(precioVenta)} COP</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full bg-sky-500"
+                   style="width:${barWidth(precioVenta, maxUtilChart)}%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>Utilidad bruta</span>
+              <span>${formatCOP(utilidad)} COP</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full ${utilidad >= 0 ? "bg-emerald-600" : "bg-red-500"}"
+                   style="width:${barWidth(utilidad, maxUtilChart)}%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-2 border-t border-slate-100 pt-2 text-[11px]">
+          <p class="text-slate-700">
+            Gastos cierre: <span class="font-mono font-bold">${formatCOP(totalGastosCierre)}</span> COP
+          </p>
+          <p class="text-slate-800 font-semibold">
+            Total neto: <span class="font-mono text-emerald-700">${formatCOP(totalNeto)}</span> COP
+          </p>
+        </div>
+      `;
+      grid.appendChild(card3);
+
+      div.appendChild(grid);
+      cont.appendChild(div);
+    }
+
+    function renderSelectorHojas() {
+      const select = document.getElementById("selectHoja");
+      select.innerHTML = "";
+
+      if (!hojas || hojas.length === 0) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "Sin hojas";
+        select.appendChild(opt);
+        return;
+      }
+
+      const ordenadas = hojas
+        .slice()
+        .sort((a, b) => (a.fechaCreacion > b.fechaCreacion ? -1 : 1));
+
+      ordenadas.forEach((h, idx) => {
+        const opt = document.createElement("option");
+        opt.value = h.id;
+        opt.textContent = `Hoja ${ordenadas.length - idx} · ${h.fechaCreacion} ${h.horaCreacion} · ${h.cerrado ? "Cerrada" : "Abierta"}`;
+        if (hojaActual && h.id === hojaActual.id) {
+          opt.selected = true;
+          selectedHistorialHojaId = h.id;
+        }
+        select.appendChild(opt);
+      });
+
+      renderHistorialHojas(selectedHistorialHojaId);
+    }
+
+    function exportarHojaCSV(hoja) {
+      if (!hoja) return;
+      const filas = hoja.filas || [];
+      const encabezados = [
+        "Fecha",
+        "Hora",
+        "Usuario",
+        "Cliente",
+        "Peso seco",
+        "Peso húmedo",
+        "Ley",
+        "Finos",
+        "Precio de compra (COP)",
+        "Total en pesos (COP)"
+      ];
+      const lineas = [encabezados.join(",")];
+
+      filas.forEach(f => {
+        const row = [
+          f.fecha,
+          f.hora,
+          `"${(f.usuario || "").replace(/"/g, '""')}"`,
+          `"${(f.cliente || "").replace(/"/g, '""')}"`,
+          f.pesoSeco,
+          f.pesoHumedo,
+          toNumber(f.ley).toFixed(3),
+          toNumber(f.finos).toFixed(2),
+          formatCOP(f.precioCompra),
+          formatCOP(f.totalPesos)
+        ];
+        lineas.push(row.join(","));
+      });
+
+      const contenido = lineas.join("\n");
+      const blob = new Blob([contenido], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `hoja-contable-${hoja.fechaCreacion}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportarHojaXLSX(hoja) {
+      if (!hoja) return;
+      const filas = hoja.filas || [];
+      const encabezados = [
+        "Fecha",
+        "Hora",
+        "Usuario",
+        "Cliente",
+        "Peso seco",
+        "Peso húmedo",
+        "Ley",
+        "Finos",
+        "Precio de compra (COP)",
+        "Total en pesos (COP)"
+      ];
+
+      let html = "<table><thead><tr>";
+      encabezados.forEach(h => {
+        html += `<th>${h}</th>`;
+      });
+      html += "</tr></thead><tbody>";
+
+      filas.forEach(f => {
+        html += "<tr>";
+        html += `<td>${f.fecha}</td>`;
+        html += `<td>${f.hora}</td>`;
+        html += `<td>${f.usuario || ""}</td>`;
+        html += `<td>${f.cliente || ""}</td>`;
+        html += `<td>${f.pesoSeco || ""}</td>`;
+        html += `<td>${f.pesoHumedo || ""}</td>`;
+        html += `<td>${toNumber(f.ley).toFixed(3)}</td>`;
+        html += `<td>${toNumber(f.finos).toFixed(2)}</td>`;
+        html += `<td>${formatCOP(f.precioCompra)}</td>`;
+        html += `<td>${formatCOP(f.totalPesos)}</td>`;
+        html += "</tr>";
+      });
+
+      html += "</tbody></table>";
+
+      const blob = new Blob([html], {
+        type: "application/vnd.ms-excel;charset=utf-8;"
+      });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `hoja-contable-${hoja.fechaCreacion}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function agregarFila() {
+      if (!hojaActual) return;
+      const ahora = new Date();
+      const fecha = formatearFecha(ahora);
+      const hora = formatearHora(ahora);
+      const usuarioInput = document.getElementById("usuarioActual");
+      const usuarioNombre = usuarioInput.value.trim();
+
+      const fila = {
+        fecha,
+        hora,
+        usuario: usuarioNombre || "",
+        cliente: "",
+        pesoSeco: "",
+        pesoHumedo: "",
+        ley: 0,
+        finos: 0,
+        precioCompra: 0,
+        totalPesos: 0
+      };
+
+      hojaActual.filas.push(fila);
+      guardarHojas(hojas);
+      renderTabla();
+      renderSaldoDisponible();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Tu código original continúa aquí SIN MODIFICACIONES
+      inicializarHojaActual();
+      asegurarEstructurasHoja(hojaActual);
+      renderSelectorHojas();
+
+      const inputUsuarioActual = document.getElementById("usuarioActual");
+      renderUsuariosDatalist();
+      const usuarioGuardado = cargarUsuarioActual();
+      if (usuarioGuardado) {
+        inputUsuarioActual.value = usuarioGuardado;
+        const u = usuarios.find(
+          el => (typeof el === "string" ? el === usuarioGuardado : el.nombre === usuarioGuardado)
+        );
+        if (u && typeof u !== "string") {
+          actualizarUsuarioInfoRegistro(u);
+        }
+      }
+
+      document.getElementById("inputSaldoInicial").value =
+        formatCOP(hojaActual.saldoInicial || 0);
+
+      inputUsuarioActual.addEventListener("change", () => {
+        const nombre = inputUsuarioActual.value.trim();
+        if (!nombre) {
+          actualizarUsuarioInfoRegistro(null);
+          guardarUsuarioActual("");
+          return;
+        }
+
+        let usuario = usuarios.find(
+          el => (typeof el === "string" ? el === nombre : el.nombre === nombre)
+        );
+
+        if (!usuario) {
+          const ahora = new Date();
+          usuario = {
+            nombre,
+            fechaRegistro: formatearFecha(ahora),
+            horaRegistro: formatearHora(ahora)
+          };
+          usuarios.push(usuario);
+        } else if (typeof usuario === "string") {
+          const ahora = new Date();
+          usuario = {
+            nombre,
+            fechaRegistro: formatearFecha(ahora),
+            horaRegistro: formatearHora(ahora)
+          };
+        }
+
+        usuarios = usuarios.map(u => {
+          if (typeof u === "string") {
+            const ahora = new Date();
+            return {
+              nombre: u,
+              fechaRegistro: formatearFecha(ahora),
+              horaRegistro: formatearHora(ahora)
+            };
+          }
+          if (u.nombre === nombre && !u.fechaRegistro) {
+            const ahora = new Date();
+            u.fechaRegistro = formatearFecha(ahora);
+            u.horaRegistro = formatearHora(ahora);
+          }
+          return u;
+        });
+
+        guardarUsuarios(usuarios);
+        renderUsuariosDatalist();
+        guardarUsuarioActual(nombre);
+
+        const usuarioCompleto = usuarios.find(u =>
+          typeof u !== "string" && u.nombre === nombre
+        ) || { nombre };
+        actualizarUsuarioInfoRegistro(usuarioCompleto);
+      });
+
+      if (hojaActual && hojaActual.filas.length === 0) {
+        agregarFila();
+      } else {
+        renderTabla();
+      }
+
+      renderVales();
+      renderGastosExtras();
+      renderDebemos();
+      renderSaldoDisponible();
+      renderHistorialHojas(hojaActual.id);
+
+      document.getElementById("btnAgregarFila").addEventListener("click", agregarFila);
+
+      document.getElementById("btnExportCSV").addEventListener("click", () => {
+        exportarHojaCSV(hojaActual);
+      });
+      document.getElementById("btnExportXLS").addEventListener("click", () => {
+        exportarHojaXLSX(hojaActual);
+      });
+
+      document.getElementById("btnExportCSVHistorial").addEventListener("click", () => {
+        const h = hojas.find(h => h.id === selectedHistorialHojaId);
+        if (!h) {
+          alert("Selecciona una hoja válida en el historial.");
+          return;
+        }
+        exportarHojaCSV(h);
+      });
+      document.getElementById("btnExportXLSHistorial").addEventListener("click", () => {
+        const h = hojas.find(h => h.id === selectedHistorialHojaId);
+        if (!h) {
+          alert("Selecciona una hoja válida en el historial.");
+          return;
+        }
+        exportarHojaXLSX(h);
+      });
+
+      document.getElementById("btnFabricacionJoyas").addEventListener("click", () => {
+        actualizarPanelFabricacion();
+        mostrarPanelFabricacion(true);
+      });
+
+      document.getElementById("btnCerrarPanelFabricacion").addEventListener("click", () => {
+        mostrarPanelFabricacion(false);
+        renderSaldoDisponible();
+      });
+
+      [
+        "inputFinosFabricacion",
+        "inputPrecioVenta",
+        "inputViaticos",
+        "inputGastos",
+        "inputBogota",
+        "inputOtros"
+      ].forEach(id => {
+        document.getElementById(id).addEventListener("input", actualizarPanelFabricacion);
+      });
+
+      document.getElementById("btnGuardarCierreHoja").addEventListener("click", guardarCierreHoja);
+
+      const inputSaldoInicial = document.getElementById("inputSaldoInicial");
+      document
+        .getElementById("btnEstablecerSaldoInicial")
+        .addEventListener("click", () => {
+          const val = toNumber(inputSaldoInicial.value);
+          hojaActual.saldoInicial = val;
+          guardarHojas(hojas);
+          renderSaldoDisponible();
+          inputSaldoInicial.value = formatCOP(val);
+        });
+      inputSaldoInicial.addEventListener("blur", () => {
+        const val = toNumber(inputSaldoInicial.value);
+        hojaActual.saldoInicial = val;
+        guardarHojas(hojas);
+        renderSaldoDisponible();
+        inputSaldoInicial.value = val ? formatCOP(val) : "";
+      });
+
+      document.getElementById("btnAgregarVale").addEventListener("click", agregarVale);
+      document.getElementById("btnAgregarGastoExtra").addEventListener("click", agregarGastoExtra);
+      document.getElementById("btnAgregarDeuda").addEventListener("click", agregarDeuda);
+
+      document.getElementById("btnInstrucciones").addEventListener("click", () => {
+        alert(
+`1) Guarda este archivo como "libro-contable.html" y ábrelo con doble clic en tu navegador.
+2) Escribe el "Usuario actual"; se registra la fecha y hora de ese usuario en las filas nuevas.
+3) Coloca el "Nuevo cupo disponible (COP)" como apertura de caja.
+4) Usa "+ Agregar fila" para ingresar movimientos.
+5) Al llenar Peso seco y Peso húmedo se calculan automáticamente:
+   - LEY (siempre positiva, truncada a 3 decimales): (peso seco - peso húmedo) × 23.03 ÷ peso seco - 2.19.
+   - FINOS (siempre positivos, truncados a 2 decimales): peso seco × ley.
+   - TOTAL PESOS (COP): finos × precio de compra (COP).
+6) Vales y Gastos extra restan del saldo disponible. "Debemos" suma al saldo disponible y luego se descuenta con pagos (total o abono); lo pendiente pasa a la hoja nueva.
+7) En "FABRICACIÓN DE JOYAS" se compara:
+   - Finos compra vs finos venta.
+   - Precio compra vs precio venta (utilidad).
+   - Viáticos, Gastos, Bogotá y Otros se descuentan para obtener el Total Neto.
+8) Al guardar el cierre:
+   - Solo se pasa a la hoja nueva: el Total Neto como saldo inicial y las deudas pendientes en "Debemos".
+   - Todo lo demás arranca en ceros.`
+        );
+      });
+
+            // Botón para borrar todos los datos ingresados por el usuario (solo si existe en el DOM)
+      const btnBorrarDatos = document.getElementById("btnBorrarDatos");
+      if (btnBorrarDatos) {
+        btnBorrarDatos.addEventListener("click", () => {
+          const confirmar = confirm(
+            "¿Deseas borrar TODOS los datos ingresados?\n\n" +
+            "- Hojas del día\n" +
+            "- Movimientos\n" +
+            "- Vales, Debemos, Gastos\n" +
+            "- Saldos disponibles\n" +
+            "- Usuarios registrados\n\n" +
+            "⚠️ La aplicación quedará completamente vacía."
+          );
+          if (!confirmar) return;
+
+          // Borrar solo los datos de esta app en LocalStorage
+          localStorage.removeItem(STORAGE_KEY_HOJAS);
+          localStorage.removeItem(STORAGE_KEY_USUARIOS);
+          localStorage.removeItem(STORAGE_KEY_ULTIMO_USUARIO);
+
+          //location.reload();
+        });
+      }
+
+      document.getElementById("btnDashboardDia").addEventListener("click", () => {
+        const panel = document.getElementById("panelDashboardDia");
+        const visible = !panel.classList.contains("hidden");
+        if (visible) {
+          panel.classList.add("hidden");
+        } else {
+          actualizarDashboardDia();
+          panel.classList.remove("hidden");
+        }
+      });
+
+      document.getElementById("selectHoja").addEventListener("change", (e) => {
+        const id = e.target.value;
+        const h = hojas.find(h => h.id === id);
+        if (!h) return;
+        hojaActual = h;
+        asegurarEstructurasHoja(hojaActual);
+        actualizarInfoHojaActual();
+        document.getElementById("inputSaldoInicial").value =
+          hojaActual.saldoInicial ? formatCOP(hojaActual.saldoInicial) : "";
+        renderTabla();
+        renderVales();
+        renderGastosExtras();
+        renderDebemos();
+        renderSaldoDisponible();
+        renderHistorialHojas(id);
+      });
+    });
+  </script>
+  <!-- Firebase Core -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+
+<script>
+  // Tu configuración real
+  const firebaseConfig = {
+    apiKey: "AIzaSyBgdwrAm0LG95KIDF6uDVfVSqwuuV49mqM",
+    authDomain: "goldflow-system.firebaseapp.com",
+    projectId: "goldflow-system",
+    storageBucket: "goldflow-system.firebasestorage.app",
+    messagingSenderId: "381029246006",
+    appId: "1:381029246006:web:b4c15f66d8cf60a9f6a497"
+  };
+
+  // Inicializar Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
+<!-- Script de sincronización -->
+<script src="sync.js"></script>
+
+</body>
+</html>
